@@ -21,7 +21,7 @@ import ormConfigProd from './config/orm.config.prod';
 
     }),
     TypeOrmModule.forRootAsync({
-      useFactory:process.env.NODE_ENV==='production'?ormConfig:ormConfigProd
+      useFactory:process.env.NODE_ENV==='production'?ormConfigProd:ormConfig
 
     }),
   
