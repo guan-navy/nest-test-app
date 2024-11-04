@@ -1,9 +1,9 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne,  PrimaryGeneratedColumn } from 'typeorm';
 import { Event } from './event.entity';
 
 @Entity()
 export class Anttendee {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
@@ -18,6 +18,13 @@ export class Anttendee {
   @Column()
   address: string;
 
-  @ManyToOne(() => Event, (event) => event.anttendees)
+  @ManyToOne(() => Event, (event) => event.anttendees,{
+    nullable: true,
+
+  })
+  @JoinColumn({
+    name: 'event_id',
+  })
+
   event: Event;
 }

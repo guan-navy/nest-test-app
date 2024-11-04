@@ -4,13 +4,17 @@ import { UpdateEventDto } from "./update-events.dto";
 import { Event } from "./event.entity";
 import {  Repository } from "typeorm";
 import { InjectRepository } from "@nestjs/typeorm";
+import { Anttendee } from "./attendee.entity";
 
 @Controller('/events')
 export class EventsController{
     private readonly logger = new Logger(EventsController.name);
     constructor(
         @InjectRepository(Event)
-        private readonly repository:Repository<Event>){
+        private readonly repository:Repository<Event>,
+        @InjectRepository(Anttendee)
+        private readonly anttendeeRepository:Repository<Anttendee>
+    ){
         
     }
     private events:Event[] = [];
@@ -44,6 +48,49 @@ export class EventsController{
 
 
         });
+    }
+    @Get('/practice2')
+    async practice2() {
+        const event = await this.repository.findOne({
+            where: { id: 1 }, // 这里使用 where 条件来查找特定 ID 的事件
+            loadEagerRelations: false, // 加载关联关系
+          });
+       return event;
+    }
+    @Get('/practice3')
+    async practice3() {
+        const event = await this.repository.findOneBy({
+            id: 1, // 这里使用 where 条件来查找特定 ID 的事件
+        })
+        const anttendee= new Anttendee();
+        anttendee.name = 'an';
+        anttendee.description = 'an';
+        anttendee.event = event;
+        anttendee.when = new Date();
+        anttendee.address = 'an';
+        await this.anttendeeRepository.save(anttendee);
+        return event;
+
+    }
+    @Get('/practice4')
+    async practice4() {
+        const event = await this.repository.findOne({
+            where: { id: 1 }, // 这里使用 where 条件来查找特定 ID 的事件
+            relations: ['anttendees'], // 加载关联关系
+
+        })
+        const anttendee= new Anttendee();
+        anttendee.name = '级联测试';
+        anttendee.description = 'an';
+        // anttendee.event = event;
+        anttendee.when = new Date();
+        anttendee.address = 'an';
+       event.anttendees.push(anttendee);
+       event.anttendees =[]
+
+        await this.repository.save(event);
+        return event;
+
     }
     @Get(':id')
     async findOne(@Param('id',ParseIntPipe) id:number) {

@@ -18,6 +18,10 @@ export class Event {
   @Column()
   address: string;
 
-  @OneToMany(() => Anttendee, (anttendee) => anttendee.event)
+  @OneToMany(() => Anttendee, (anttendee) => anttendee.event,{
+    // eager: true,
+    cascade: true,
+
+  })
   anttendees: Anttendee[];
 }
